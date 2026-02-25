@@ -1373,6 +1373,7 @@ export default function Reel() {
   });
   const [pulse, setPulse] = useState(false);
   const [displayScore, setDisplayScore] = useState(0);
+  const [showRank, setShowRank] = useState(false);
   const timerRef = useRef(null);
 
   // Persist to localStorage
@@ -1456,15 +1457,19 @@ export default function Reel() {
   useEffect(() => {
     if (gameState === "wrong" || gameState === "gameover") {
       setDisplayScore(0);
-      if (chain === 0) return;
-      const duration = 1200;
-      const steps = Math.min(chain, 30);
+      setShowRank(false);
+      if (chain === 0) { setShowRank(true); return; }
+      const duration = 800;
+      const steps = Math.min(chain, 20);
       const stepTime = duration / steps;
       let step = 0;
       const timer = setInterval(() => {
         step++;
         setDisplayScore(Math.round((step / steps) * chain));
-        if (step >= steps) clearInterval(timer);
+        if (step >= steps) {
+          clearInterval(timer);
+          setTimeout(() => setShowRank(true), 200);
+        }
       }, stepTime);
       return () => clearInterval(timer);
     }
@@ -1499,7 +1504,7 @@ export default function Reel() {
       color: "#D4C4A8",
       fontFamily: "'DM Sans', sans-serif",
       position: "relative",
-      overflow: "hidden",
+      overflowX: "hidden",
       overflowY: gameState === "wrong" || gameState === "gameover" ? "auto" : "hidden",
     }}>
       {pulse && (
@@ -1674,8 +1679,8 @@ export default function Reel() {
                 const size = 4 + Math.random() * 10;
                 const colors = ["#D4C4A8", "#6B8B5A", "#C8503A", "#D4C4A8", "#6B8B5A", "#C8503A"];
                 const color = colors[i % colors.length];
-                const dur = 1.5 + Math.random() * 2;
-                const delay = Math.random() * 1.2;
+                const dur = 0.6 + Math.random() * 0.8;
+                const delay = Math.random() * 0.4;
                 const drift = (Math.random() - 0.5) * 40;
                 const rot = Math.random() * 720;
                 const shapes = ["50%", "2px", "50% 0 50% 50%"];
@@ -1710,15 +1715,16 @@ export default function Reel() {
 
             {(() => {
               const m = getMilestone(chain);
-              return (
+              return showRank ? (
                 <div style={{
                   fontSize: 14, fontFamily: "'Syne', sans-serif", fontWeight: 700,
                   letterSpacing: 4, color: "#6B8B5A", marginBottom: 8, textTransform: "uppercase",
+                  animation: "fadeIn 0.5s ease",
                 }}>Your Rank: {m.title}</div>
-              );
+              ) : <div style={{ height: 24 }} />;
             })()}
 
-            {chain > bestChain - 1 && chain > 0 && (
+            {showRank && chain > bestChain - 1 && chain > 0 && (
               <div style={{
                 display: "inline-block", padding: "4px 12px", borderRadius: 10,
                 background: "#D4C4A812", fontSize: 12, fontFamily: "'Space Mono', monospace",
@@ -1728,7 +1734,7 @@ export default function Reel() {
               </div>
             )}
 
-            {pastReels.length > 0 && (() => {
+            {showRank && pastReels.length > 0 && (() => {
               const last5 = pastReels.slice(-5);
               const reversed = [...last5].reverse();
               const allTimeBest = Math.max(...pastReels);
@@ -1802,7 +1808,7 @@ export default function Reel() {
             })()}
 
             {/* All-time best */}
-            {pastReels.length > 0 && (() => {
+            {showRank && pastReels.length > 0 && (() => {
               const allTimeBest = Math.max(...pastReels);
               const bestRank = getMilestone(allTimeBest);
               return (
@@ -1826,7 +1832,7 @@ export default function Reel() {
               );
             })()}
 
-            <div style={{ display: "flex", gap: 10, justifyContent: "center", flexWrap: "wrap" }}>
+            {showRank && <div style={{ display: "flex", gap: 10, justifyContent: "center", flexWrap: "wrap", animation: "fadeIn 0.5s ease" }}>
               <button onClick={startGame} style={{
                 background: "#D4C4A8", color: "#1A1A16", border: "none",
                 padding: "14px 36px", borderRadius: 30,
@@ -1861,7 +1867,7 @@ export default function Reel() {
               >
                 SHARE
               </button>
-            </div>
+            </div>}
           </div>
         )}
       </div>
