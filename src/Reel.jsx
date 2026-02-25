@@ -1317,19 +1317,25 @@ function buildQuestions() {
   // Deep clone and filter to only valid 4-option questions
   const easy = shuffle(EASY_QUESTIONS.filter(q => q.options && q.options.length === 4).map(cloneQuestion));
   const medium = shuffle(MEDIUM_QUESTIONS.filter(q => q.options && q.options.length === 4).map(cloneQuestion));
-  const hard = shuffle(HARD_QUESTIONS.filter(q => q.options && q.options.length === 4).map(cloneQuestion));
+  const hardAll = shuffle(HARD_QUESTIONS.filter(q => q.options && q.options.length === 4).map(cloneQuestion));
+  const hard = hardAll.slice(0, Math.ceil(hardAll.length / 2));
+  const expert = hardAll.slice(Math.ceil(hardAll.length / 2));
 
   // Difficulty ramp:
-  // Q1–4:   all easy
-  // Q5–8:   easy/medium mix
-  // Q9–16:  medium
-  // Q17+:   medium/hard mix then pure hard
-  const phase1 = easy.slice(0, 4);                           // 4 easy
-  const phase2 = shuffle([...easy.slice(4, 10), ...medium.slice(0, 6)]);  // easy + medium mix
-  const phase3 = medium.slice(6);                             // rest of medium
-  const phase4 = hard;                                        // all hard
+  // Q1–5:   easy only
+  // Q6–10:  easy + medium mix
+  // Q11–15: medium only
+  // Q16–20: medium + hard mix
+  // Q21–40: hard only
+  // Q41+:   expert (very very hard)
+  const phase1 = easy.slice(0, 5);
+  const phase2 = shuffle([...easy.slice(5, 8), ...medium.slice(0, 2)]);
+  const phase3 = medium.slice(2, 7);
+  const phase4 = shuffle([...medium.slice(7, 10), ...hard.slice(0, 2)]);
+  const phase5 = hard.slice(2, 22);
+  const phase6 = expert;
 
-  const all = [...phase1, ...phase2, ...phase3, ...phase4];
+  const all = [...phase1, ...phase2, ...phase3, ...phase4, ...phase5, ...phase6];
 
   // Shuffle each question's options independently
   for (let i = 0; i < all.length; i++) {
