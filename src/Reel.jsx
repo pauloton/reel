@@ -1306,7 +1306,7 @@ function shuffle(arr) {
 function cloneQuestion(q) {
   return {
     q: q.q,
-    options: [q.options[0], q.options[1], q.options[2], q.options[3]],
+    options: [...q.options],
     answer: q.answer,
     cat: q.cat,
     detail: q.detail,
@@ -1314,10 +1314,10 @@ function cloneQuestion(q) {
 }
 
 function buildQuestions() {
-  // Deep clone every question
-  const easy = shuffle(EASY_QUESTIONS.map(cloneQuestion));
-  const medium = shuffle(MEDIUM_QUESTIONS.map(cloneQuestion));
-  const hard = shuffle(HARD_QUESTIONS.map(cloneQuestion));
+  // Deep clone and filter to only valid 4-option questions
+  const easy = shuffle(EASY_QUESTIONS.filter(q => q.options && q.options.length === 4).map(cloneQuestion));
+  const medium = shuffle(MEDIUM_QUESTIONS.filter(q => q.options && q.options.length === 4).map(cloneQuestion));
+  const hard = shuffle(HARD_QUESTIONS.filter(q => q.options && q.options.length === 4).map(cloneQuestion));
 
   // Difficulty ramp:
   // Q1–4:   all easy
