@@ -1806,30 +1806,6 @@ export default function Reel() {
               );
             })()}
 
-            {history.length > 0 && (
-              <div style={{
-                background: "#E6EAD706", borderRadius: 16, padding: "20px 24px",
-                marginBottom: 32, textAlign: "left", border: "1px solid #E6EAD708",
-              }}>
-                <div style={{
-                  fontSize: 11, letterSpacing: 2, color: "#5E8779",
-                  textTransform: "uppercase", marginBottom: 14, fontFamily: "'Space Mono', monospace",
-                }}>Recap</div>
-                <div style={{ display: "flex", flexWrap: "wrap", gap: 6 }}>
-                  {history.map((h, i) => (
-                    <div key={`recap-${i}`} style={{
-                      width: 28, height: 28, borderRadius: 8,
-                      background: h.correct ? "#E6EAD7" : "#5E8779",
-                      display: "flex", alignItems: "center", justifyContent: "center",
-                      fontSize: 11, fontFamily: "'Space Mono', monospace", fontWeight: 700, color: "#1F3235",
-                    }}>
-                      {i + 1}
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
-
             <div style={{ display: "flex", gap: 10, justifyContent: "center", flexWrap: "wrap" }}>
               <button onClick={startGame} style={{
                 background: "#E6EAD7", color: "#1F3235", border: "none",
