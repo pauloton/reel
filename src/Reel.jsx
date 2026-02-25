@@ -1354,15 +1354,27 @@ export default function Reel() {
   const [questions, setQuestions] = useState([]);
   const [current, setCurrent] = useState(0);
   const [chain, setChain] = useState(0);
-  const [bestChain, setBestChain] = useState(0);
+  const [bestChain, setBestChain] = useState(() => {
+    try { return parseInt(localStorage.getItem("reel_bestChain")) || 0; } catch { return 0; }
+  });
   const [selected, setSelected] = useState(null);
   const [showResult, setShowResult] = useState(false);
   const [isCorrect, setIsCorrect] = useState(false);
   const [animateIn, setAnimateIn] = useState(false);
   const [history, setHistory] = useState([]);
-  const [pastReels, setPastReels] = useState([]);  // tracks chain score of each completed game
+  const [pastReels, setPastReels] = useState(() => {
+    try { const s = localStorage.getItem("reel_pastReels"); return s ? JSON.parse(s) : []; } catch { return []; }
+  });
   const [pulse, setPulse] = useState(false);
   const timerRef = useRef(null);
+
+  // Persist to localStorage
+  useEffect(() => {
+    try { localStorage.setItem("reel_pastReels", JSON.stringify(pastReels)); } catch {}
+  }, [pastReels]);
+  useEffect(() => {
+    try { localStorage.setItem("reel_bestChain", String(bestChain)); } catch {}
+  }, [bestChain]);
 
   const startGame = useCallback(() => {
     try {
@@ -1486,7 +1498,7 @@ export default function Reel() {
               fontSize: 11, fontFamily: "'Space Mono', monospace", color: "#5E8779",
               letterSpacing: 2, marginBottom: 32,
             }}>
-              CINEMA CHAIN QUIZ
+              LIGHTS. CAMERA. TRIVIA.
             </div>
 
             <h1 style={{
@@ -1498,7 +1510,7 @@ export default function Reel() {
               fontSize: 16, fontFamily: "'DM Sans', sans-serif", color: "#5E8779",
               lineHeight: 1.6, maxWidth: 280, margin: "0 auto 48px", fontWeight: 400,
             }}>
-              One wrong answer ends it all.<br />How long can you keep the chain alive?
+              How long can you keep the chain alive?
             </p>
 
             <button onClick={startGame} style={{
@@ -1532,19 +1544,10 @@ export default function Reel() {
             transition: "all 0.4s ease",
           }}>
             <div style={{
-              display: "flex", justifyContent: "space-between", alignItems: "center",
+              display: "flex", justifyContent: "flex-end", alignItems: "center",
               marginBottom: 24,
             }}>
-              <div style={{
-                padding: "5px 12px", borderRadius: 14,
-                background: "#5E877925", border: "1px solid #5E877950",
-                fontSize: 11, fontFamily: "'Space Mono', monospace", color: "#E6EAD7",
-                fontWeight: 700, letterSpacing: 1,
-              }}>
-                {CAT_LABELS[currentQ.cat]}
-              </div>
-              <div style={{ display: "flex", alignItems: "baseline", gap: 4 }}>
-                <span style={{ fontSize: 12, fontFamily: "'Space Mono', monospace", color: "#5E8779" }}>REEL</span>
+              <div style={{ display: "flex", alignItems: "baseline", gap: 0 }}>
                 <span style={{
                   fontSize: 28, fontFamily: "'Space Mono', monospace", fontWeight: 700, color: "#E6EAD7",
                 }}>{chain}</span>
@@ -1613,7 +1616,7 @@ export default function Reel() {
                       color: showResult && (opt === currentQ.answer || (opt === selected && !isCorrect)) ? "#1F3235" : "#5E8779",
                       flexShrink: 0,
                     }}>
-                      {showResult && opt === currentQ.answer ? "✓" : showResult && opt === selected && !isCorrect ? "✗" : String.fromCharCode(65 + i)}
+                      {String.fromCharCode(65 + i)}
                     </span>
                     {opt}
                   </button>
@@ -1677,7 +1680,7 @@ export default function Reel() {
               fontSize: 11, fontFamily: "'Space Mono', monospace", color: "#5E8779",
               letterSpacing: 2, marginBottom: 24,
             }}>
-              GAME OVER
+              YOUR REEL SCORE
             </div>
 
             <div style={{
@@ -1691,7 +1694,7 @@ export default function Reel() {
                 <div style={{
                   fontSize: 14, fontFamily: "'Syne', sans-serif", fontWeight: 700,
                   letterSpacing: 4, color: "#5E8779", marginBottom: 8, textTransform: "uppercase",
-                }}>{m.title}</div>
+                }}>Your Rank: {m.title}</div>
               );
             })()}
 
@@ -1720,7 +1723,7 @@ export default function Reel() {
                   <div style={{
                     fontSize: 11, letterSpacing: 2, color: "#5E8779",
                     textTransform: "uppercase", marginBottom: 16, fontFamily: "'Space Mono', monospace",
-                  }}>History</div>
+                  }}>Your Last Reels</div>
                   <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
                     {reversed.map((score, i) => {
                       const origIndex = last5.length - 1 - i;
@@ -1778,6 +1781,31 @@ export default function Reel() {
               );
             })()}
 
+            {/* All-time best */}
+            {pastReels.length > 0 && (() => {
+              const allTimeBest = Math.max(...pastReels);
+              const bestRank = getMilestone(allTimeBest);
+              return (
+                <div style={{
+                  background: "#E6EAD706", borderRadius: 16, padding: "20px 24px",
+                  marginBottom: 32, textAlign: "center", border: "1px solid #E6EAD708",
+                }}>
+                  <div style={{
+                    fontSize: 11, letterSpacing: 2, color: "#5E8779",
+                    textTransform: "uppercase", marginBottom: 16, fontFamily: "'Space Mono', monospace",
+                  }}>All-Time Best</div>
+                  <div style={{
+                    fontSize: 48, fontFamily: "'Space Mono', monospace", fontWeight: 700,
+                    color: "#E6EAD7", lineHeight: 1, marginBottom: 4,
+                  }}>{allTimeBest}</div>
+                  <div style={{
+                    fontSize: 12, fontFamily: "'Syne', sans-serif", fontWeight: 700,
+                    letterSpacing: 3, color: "#5E8779", textTransform: "uppercase",
+                  }}>{bestRank.title}</div>
+                </div>
+              );
+            })()}
+
             {history.length > 0 && (
               <div style={{
                 background: "#E6EAD706", borderRadius: 16, padding: "20px 24px",
@@ -1795,7 +1823,7 @@ export default function Reel() {
                       display: "flex", alignItems: "center", justifyContent: "center",
                       fontSize: 11, fontFamily: "'Space Mono', monospace", fontWeight: 700, color: "#1F3235",
                     }}>
-                      {h.correct ? "✓" : "✗"}
+                      {i + 1}
                     </div>
                   ))}
                 </div>
@@ -1817,10 +1845,13 @@ export default function Reel() {
               </button>
               <button onClick={() => {
                 const m = getMilestone(chain);
-                const recap = history.map(h => h.correct ? "🟩" : "🟥").join("");
-                const text = `🎬 Reel — ${m.title}\nI got ${chain} in a row!\n${recap}`;
-                if (navigator.clipboard) { navigator.clipboard.writeText(text); }
-                else if (navigator.share) { navigator.share({ text }); }
+                const url = window.location.href;
+                const text = `I played Reel and scored ${chain}. I am a legit ${m.title}. How about you?`;
+                if (navigator.share) {
+                  navigator.share({ title: "Reel", text, url }).catch(() => {});
+                } else if (navigator.clipboard) {
+                  navigator.clipboard.writeText(text + " " + url);
+                }
               }} style={{
                 background: "transparent", color: "#E6EAD7",
                 border: "1.5px solid #E6EAD740",
