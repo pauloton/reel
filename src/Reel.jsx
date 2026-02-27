@@ -1561,7 +1561,7 @@ export default function Reel() {
               fontSize: 11, fontFamily: "'Space Mono', monospace", color: "#BBA149",
               letterSpacing: 2, marginBottom: 32,
             }}>
-              LIGHTS. CAMERA. TRIVIA.
+              Cinema. Trivia. Action.
             </div>
 
             <h1 style={{
@@ -1573,7 +1573,7 @@ export default function Reel() {
               fontSize: 16, fontFamily: "'DM Sans', sans-serif", color: "#BBA149",
               lineHeight: 1.6, maxWidth: 280, margin: "0 auto 48px", fontWeight: 400,
             }}>
-              How long can you keep the chain alive?
+              One wrong answer and it's a wrap. How far can you go?
             </p>
 
             <button onClick={startGame} style={{
