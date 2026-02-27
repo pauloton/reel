@@ -1373,6 +1373,14 @@ export default function Reel() {
   });
   const [pulse, setPulse] = useState(false);
   const [displayScore, setDisplayScore] = useState(0);
+  const confettiPieces = useRef(
+    Array.from({ length: 70 }, (_, i) => ({
+      id: i, x: Math.random() * 100, delay: Math.random() * 1.4,
+      duration: 1.6 + Math.random() * 1.4,
+      color: ["#EBE4CF","#EBE4CF","#BBA149","#BBA149","#D03D01","#D03D01","#EBE4CF"][i % 7],
+      size: 5 + Math.random() * 7, drift: (Math.random() - 0.5) * 80, rot: Math.random() * 360,
+    }))
+  ).current;
   const [showRank, setShowRank] = useState(false);
   const timerRef = useRef(null);
 
@@ -1676,28 +1684,16 @@ export default function Reel() {
             textAlign: "center", paddingTop: 24, paddingBottom: 40,
             animation: "fadeIn 0.5s ease", position: "relative",
           }}>
-            {chain > 0 && <div style={{ position: "fixed", inset: 0, pointerEvents: "none", zIndex: 200, overflow: "hidden" }}>
-              {Array.from({ length: 80 }).map((_, i) => {
-                const x = Math.random() * 100;
-                const size = 4 + Math.random() * 10;
-                const colors = ["#EBE4CF", "#BBA149", "#D03D01", "#EBE4CF", "#BBA149", "#D03D01"];
-                const color = colors[i % colors.length];
-                const dur = 2.2 + Math.random() * 1.8;
-                const delay = Math.random() * 0.8;
-                const drift = (Math.random() - 0.5) * 40;
-                const rot = Math.random() * 720;
-                const shapes = ["50%", "2px", "50% 0 50% 50%"];
-                return (
-                  <div key={`conf-${i}`} style={{
-                    position: "absolute", left: `${x}%`, top: -20,
-                    width: size, height: size * (0.6 + Math.random() * 1.4),
-                    background: color, borderRadius: shapes[i % shapes.length],
-                    opacity: 0,
-                    animation: `confettiRain ${dur}s cubic-bezier(0.25, 0.1, 0.25, 1) ${delay}s forwards`,
-                    ["--drift"]: `${drift}px`, ["--rot"]: `${rot}deg`,
-                  }} />
-                );
-              })}
+            {chain > 0 && <div style={{ position: "fixed", inset: 0, pointerEvents: "none", overflow: "hidden", zIndex: 9999 }}>
+              {confettiPieces.map(pc => (
+                <div key={pc.id} style={{
+                  position: "absolute", top: 0, left: pc.x + "%",
+                  width: pc.size + "px", height: (pc.size * 0.45) + "px",
+                  background: pc.color, borderRadius: "2px",
+                  "--cdrift": pc.drift + "px", "--crot": (pc.rot + 540) + "deg",
+                  animation: "confettiFall " + pc.duration + "s ease-in " + pc.delay + "s both",
+                }} />
+              ))}
             </div>}
 
             <div style={{
@@ -1866,13 +1862,7 @@ export default function Reel() {
           30% { opacity: 1; }
           100% { opacity: 0; }
         }
-        @keyframes confettiRain {
-          0% { opacity: 1; transform: translateY(0) translateX(0) rotate(0deg); }
-          20% { opacity: 1; transform: translateY(22vh) translateX(calc(var(--drift) * 0.3)) rotate(calc(var(--rot) * 0.2)); }
-          60% { opacity: 0.9; transform: translateY(66vh) translateX(calc(var(--drift) * 0.7)) rotate(calc(var(--rot) * 0.6)); }
-          90% { opacity: 0.4; transform: translateY(100vh) translateX(var(--drift)) rotate(var(--rot)); }
-          100% { opacity: 0; transform: translateY(110vh) translateX(var(--drift)) rotate(var(--rot)); }
-        }
+        @keyframes confettiFall { 0%{transform:translateY(-10px) translateX(0) rotate(0deg);opacity:1} 85%{opacity:1} 100%{transform:translateY(110vh) translateX(var(--cdrift)) rotate(var(--crot));opacity:0} }
         ::selection { background: #EBE4CF30; }
         ::-webkit-scrollbar { width: 4px; }
         ::-webkit-scrollbar-track { background: #26302E; }
