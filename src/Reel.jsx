@@ -1381,6 +1381,29 @@ export default function Reel() {
       size: 5 + Math.random() * 7, drift: (Math.random() - 0.5) * 80, rot: Math.random() * 360,
     }))
   ).current;
+
+  // Projector audio on home screen
+  const projectorAudio = useRef(null);
+  useEffect(() => {
+    if (!projectorAudio.current) {
+      projectorAudio.current = new Audio("/projector.mp3");
+      projectorAudio.current.loop = true;
+      projectorAudio.current.volume = 0.3;
+    }
+    const audio = projectorAudio.current;
+    if (gameState === "menu") {
+      const tryPlay = () => {
+        audio.play().catch(() => {});
+      };
+      tryPlay();
+      const onClick = () => { tryPlay(); document.removeEventListener("click", onClick); };
+      document.addEventListener("click", onClick);
+      return () => { document.removeEventListener("click", onClick); };
+    } else {
+      audio.pause();
+      audio.currentTime = 0;
+    }
+  }, [gameState]);
   const [showRank, setShowRank] = useState(false);
   const [showRankText, setShowRankText] = useState(false);
   const timerRef = useRef(null);
@@ -1557,7 +1580,7 @@ export default function Reel() {
             <h1 style={{
               fontSize: 72, fontWeight: 800, fontFamily: "'Syne', sans-serif",
               color: "#EBE4CF", margin: "0 0 12px", lineHeight: 0.9, letterSpacing: -2,
-              animation: "projectorFlicker 10s linear infinite",
+              animation: "projectorFlicker 1.5s linear infinite",
               textShadow: "0 0 20px #EBE4CF40, 0 0 60px #EBE4CF15",
             }}>reel</h1>
 
@@ -1874,49 +1897,32 @@ export default function Reel() {
           to { opacity: 1; transform: translateY(0); }
         }
         @keyframes projectorFlicker {
-          0% { opacity: 1; text-shadow: 0 0 20px #EBE4CF40, 0 0 60px #EBE4CF15; }
-          2% { opacity: 0.7; text-shadow: 0 0 40px #EBE4CF80; }
-          2.5% { opacity: 0.1; text-shadow: none; }
-          3% { opacity: 0.85; text-shadow: 0 0 30px #EBE4CF60; }
-          3.5% { opacity: 0.15; text-shadow: none; }
-          4.5% { opacity: 0.9; text-shadow: 0 0 35px #EBE4CF70; }
-          5% { opacity: 1; text-shadow: 0 0 20px #EBE4CF40, 0 0 60px #EBE4CF15; }
-          14% { opacity: 1; text-shadow: 0 0 20px #EBE4CF40, 0 0 60px #EBE4CF15; }
-          15% { opacity: 0.6; text-shadow: 0 0 35px #EBE4CF70; }
-          15.5% { opacity: 0.1; text-shadow: none; }
-          16% { opacity: 0.8; text-shadow: 0 0 25px #EBE4CF50; }
-          16.5% { opacity: 1; text-shadow: 0 0 20px #EBE4CF40, 0 0 60px #EBE4CF15; }
-          29% { opacity: 1; text-shadow: 0 0 20px #EBE4CF40, 0 0 60px #EBE4CF15; }
-          30% { opacity: 0.5; text-shadow: 0 0 40px #EBE4CF80; }
-          30.5% { opacity: 0.15; text-shadow: none; }
-          31% { opacity: 0.85; text-shadow: 0 0 30px #EBE4CF60; }
-          31.5% { opacity: 0.2; text-shadow: none; }
-          32.5% { opacity: 0.9; text-shadow: 0 0 30px #EBE4CF60; }
-          33% { opacity: 1; text-shadow: 0 0 20px #EBE4CF40, 0 0 60px #EBE4CF15; }
-          44% { opacity: 1; text-shadow: 0 0 20px #EBE4CF40, 0 0 60px #EBE4CF15; }
-          45% { opacity: 0.7; text-shadow: 0 0 35px #EBE4CF70; }
-          45.5% { opacity: 0.1; text-shadow: none; }
-          46.5% { opacity: 1; text-shadow: 0 0 20px #EBE4CF40, 0 0 60px #EBE4CF15; }
-          59% { opacity: 1; text-shadow: 0 0 20px #EBE4CF40, 0 0 60px #EBE4CF15; }
-          60% { opacity: 0.6; text-shadow: 0 0 40px #EBE4CF80; }
-          60.5% { opacity: 0.15; text-shadow: none; }
-          61% { opacity: 0.85; text-shadow: 0 0 25px #EBE4CF50; }
-          61.5% { opacity: 0.1; text-shadow: none; }
-          62% { opacity: 0.9; text-shadow: 0 0 35px #EBE4CF70; }
-          62.5% { opacity: 0.2; text-shadow: none; }
-          63.5% { opacity: 1; text-shadow: 0 0 20px #EBE4CF40, 0 0 60px #EBE4CF15; }
-          74% { opacity: 1; text-shadow: 0 0 20px #EBE4CF40, 0 0 60px #EBE4CF15; }
-          75% { opacity: 0.7; text-shadow: 0 0 30px #EBE4CF60; }
-          75.5% { opacity: 0.15; text-shadow: none; }
-          76% { opacity: 0.85; text-shadow: 0 0 30px #EBE4CF60; }
-          76.5% { opacity: 1; text-shadow: 0 0 20px #EBE4CF40, 0 0 60px #EBE4CF15; }
-          89% { opacity: 1; text-shadow: 0 0 20px #EBE4CF40, 0 0 60px #EBE4CF15; }
-          90% { opacity: 0.5; text-shadow: 0 0 40px #EBE4CF80; }
-          90.5% { opacity: 0.1; text-shadow: none; }
-          91% { opacity: 0.9; text-shadow: 0 0 35px #EBE4CF70; }
-          91.5% { opacity: 0.15; text-shadow: none; }
-          92.5% { opacity: 1; text-shadow: 0 0 20px #EBE4CF40, 0 0 60px #EBE4CF15; }
-          100% { opacity: 1; text-shadow: 0 0 20px #EBE4CF40, 0 0 60px #EBE4CF15; }
+          0% { opacity: 0.95; text-shadow: 0 0 20px #EBE4CF40, 0 0 60px #EBE4CF15; }
+          4% { opacity: 0.75; text-shadow: 0 0 14px #EBE4CF30; }
+          8% { opacity: 0.95; text-shadow: 0 0 22px #EBE4CF45; }
+          12% { opacity: 0.78; text-shadow: 0 0 15px #EBE4CF32; }
+          16% { opacity: 1; text-shadow: 0 0 24px #EBE4CF50, 0 0 60px #EBE4CF15; }
+          20% { opacity: 0.72; text-shadow: 0 0 13px #EBE4CF28; }
+          24% { opacity: 0.94; text-shadow: 0 0 20px #EBE4CF40; }
+          28% { opacity: 0.76; text-shadow: 0 0 14px #EBE4CF30; }
+          32% { opacity: 0.97; text-shadow: 0 0 22px #EBE4CF45; }
+          36% { opacity: 0.74; text-shadow: 0 0 13px #EBE4CF28; }
+          40% { opacity: 0.96; text-shadow: 0 0 21px #EBE4CF42; }
+          44% { opacity: 0.78; text-shadow: 0 0 15px #EBE4CF32; }
+          48% { opacity: 0.93; text-shadow: 0 0 20px #EBE4CF40; }
+          52% { opacity: 0.73; text-shadow: 0 0 13px #EBE4CF28; }
+          56% { opacity: 0.98; text-shadow: 0 0 23px #EBE4CF46; }
+          60% { opacity: 0.76; text-shadow: 0 0 14px #EBE4CF30; }
+          64% { opacity: 1; text-shadow: 0 0 24px #EBE4CF50, 0 0 60px #EBE4CF15; }
+          68% { opacity: 0.74; text-shadow: 0 0 13px #EBE4CF28; }
+          72% { opacity: 0.95; text-shadow: 0 0 20px #EBE4CF40; }
+          76% { opacity: 0.77; text-shadow: 0 0 14px #EBE4CF30; }
+          80% { opacity: 0.96; text-shadow: 0 0 22px #EBE4CF45; }
+          84% { opacity: 0.73; text-shadow: 0 0 13px #EBE4CF28; }
+          88% { opacity: 0.94; text-shadow: 0 0 20px #EBE4CF40; }
+          92% { opacity: 0.76; text-shadow: 0 0 14px #EBE4CF30; }
+          96% { opacity: 0.97; text-shadow: 0 0 22px #EBE4CF44; }
+          100% { opacity: 0.95; text-shadow: 0 0 20px #EBE4CF40, 0 0 60px #EBE4CF15; }
         }
         @keyframes rankPop {
           0% { opacity: 0; transform: scale(0.6); }
