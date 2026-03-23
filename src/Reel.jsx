@@ -2626,10 +2626,10 @@ export default function Reel() {
               const m = getMilestone(chain);
               return showRankText ? (
                 <div style={{
-                  fontSize: 14, fontFamily: "'Syne', sans-serif", fontWeight: 700,
-                  letterSpacing: 4, color: "#BBA149", marginBottom: 4, textTransform: "uppercase",
+                  fontSize: 18, fontFamily: "'Syne', sans-serif", fontWeight: 700,
+                  letterSpacing: 5, color: "#BBA149", marginBottom: 4, textTransform: "uppercase",
                   animation: "rankPop 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) both",
-                }}>Your Rank: {m.title}</div>
+                }}>Rank: {m.title}</div>
               ) : <div style={{ height: 20 }} />;
             })()}
 
