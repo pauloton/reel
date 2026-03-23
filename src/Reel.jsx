@@ -1606,14 +1606,19 @@ export default function Reel() {
               PLAY
             </button>
 
-            {bestChain > 0 && (
+            {bestChain > 0 && (() => {
+              const bestRankTitle = getMilestone(bestChain).title;
+              return (
               <div style={{
                 marginTop: 32, fontSize: 13, fontFamily: "'Space Mono', monospace", color: "#BBA149",
-                
+                textAlign: "center",
               }}>
                 best: <span style={{ color: "#EBE4CF" }}>{bestChain}</span>
+                <span style={{ color: "#BBA14960", margin: "0 8px" }}>·</span>
+                <span style={{ color: "#BBA149", fontSize: 11, letterSpacing: 2, textTransform: "uppercase" }}>{bestRankTitle}</span>
               </div>
-            )}
+              );
+            })()}
           </div>
         )}
 
@@ -1739,13 +1744,13 @@ export default function Reel() {
               display: "inline-block", padding: "5px 14px", borderRadius: 14,
               background: "#EBE4CF10", border: "1px solid #EBE4CF18",
               fontSize: 11, fontFamily: "'Space Mono', monospace", color: "#BBA149",
-              letterSpacing: 2, marginBottom: 12,
+              letterSpacing: 2, marginBottom: 20,
             }}>
               YOUR REEL SCORE
             </div>
 
             <div style={{
-              fontSize: 80, fontFamily: "'Space Mono', monospace", fontWeight: 700,
+              fontSize: 96, fontFamily: "'Space Mono', monospace", fontWeight: 700,
               color: "#EBE4CF", lineHeight: 1, marginBottom: 4,
               transform: displayScore === chain && chain > 0 ? "scale(1)" : "scale(0.9)",
               transition: "transform 0.3s ease",
@@ -1768,11 +1773,16 @@ export default function Reel() {
               <div style={{
                 display: "inline-block", padding: "4px 12px", borderRadius: 10,
                 background: "#EBE4CF12", fontSize: 12, fontFamily: "'Space Mono', monospace",
-                color: "#EBE4CF", letterSpacing: 1, marginBottom: 20,
+                color: "#EBE4CF", letterSpacing: 1, marginBottom: 8,
               }}>
                 ★ NEW BEST
               </div>
             )}
+
+            {showRank && pastReels.length > 0 && (() => {
+
+              return <div style={{ width: "100%", height: 1, background: "#EBE4CF10", margin: "28px 0 24px" }} />;
+            })()}
 
             {showRank && pastReels.length > 0 && (() => {
               const last5 = pastReels.slice(-5);
