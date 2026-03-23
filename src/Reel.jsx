@@ -1,3 +1,5 @@
+import { useState, useRef, useCallback, useEffect } from "react";
+
 const EASY_QUESTIONS = [
 { q: "Who directed Get Out?", options: ["Jordan Peele", "Spike Lee", "Barry Jenkins", "Steve McQueen"], answer: "Jordan Peele", cat: "director", detail: "Jordan Peele's 2017 horror debut" },
   { q: "Who directed Jaws?", options: ["Steven Spielberg", "Ridley Scott", "John Carpenter", "William Friedkin"], answer: "Steven Spielberg", cat: "director", detail: "The 1975 blockbuster that invented the summer movie" },
